@@ -1,5 +1,19 @@
 using Plots, HypertextLiteral
 
+#//////////////////////Global variables//////////////////////
+begin
+    g = 9.81    #m/s^2
+    m1 = 0.05   #kg
+    m2 = 0.02   #kg
+
+    x1 = []     #m
+    x2 = []     #m
+
+    v1 = []     #m/s
+    v2 = []     #m/s
+
+    
+end
 
 #//////////////////////Physics//////////////////////
 begin
@@ -11,8 +25,7 @@ end
 #//////////////////////Simulation//////////////////////
 begin
     function simulate()
-        Plots.plot([1,2,3,4,5,6,7,8,9,], [4,5,4,5,4,5,4,5,4], label="test")
-        Plots.plot!(title="Simulation")
+        
     end
 end
 
