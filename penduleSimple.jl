@@ -16,7 +16,7 @@ begin
     global posx = [0.0] # [m]
     global posy = [l]   # [m]
 
-    global vitx = [1.2] # [m/s]
+    global vitx = [0.2] # [m/s]
     global vity = [0.0] # [m/s]
 
 end
