@@ -31,7 +31,7 @@ begin
 
         # my theta is the problem
         theta = tan(x/y)
-        v = sqrt(vx^2 + vx^2)
+        v = sqrt(vx^2 + vy^2)
         an = v^2/l
 
 
