@@ -1,4 +1,4 @@
-using Plots
+using GLMakie
 
 #//////////////////////Global variables//////////////////////
 begin
@@ -32,12 +32,37 @@ end
 #//////////////////////Simulation//////////////////////
 begin
     function simulate(step, limitStep)
-        # Animation
-        @gif for i in 1:step:limitStep
-            Plots.plot(posx, posy, label=false, title="Yes", xlims=[-0.5, 0.5], ylims=[-0.5, 0.5])
-            # Incrementation
+        x = Observable(posx[end])
+        y = Observable(posy[end])
+
+        global fig = Figure(resolution = (800, 800))
+        ax = Axis(
+            fig[1, 1],
+            aspect = DataAspect(),
+            limits = (-L-0.1, L+0.1, -L-0.1, L+0.1)
+        )
+
+        #//////Rod build//////
+        rod_points = lift(x, y) do xb, yb
+            Point2f[(0, 0), (xb, yb)]
+        end
+        lines!(ax, rod_points, linewidth = 3)
+
+        #//////Bob build//////
+        scatter!(ax, lift(x, y) do xb, yb
+            Point2f(xb, yb)
+        end, markersize = 20)
+
+        #//////Animation loop//////
+        for i in 1:step:limitStep
             eulerStep(step)
-        end every 5
+
+            x[] = posx[end]
+            y[] = posy[end]
+
+            sleep(0.01)
+            display(fig)
+        end
     end
 end
 
