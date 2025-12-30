@@ -5,41 +5,51 @@ begin
     global gStep = 0.01
     global gLimitStep = 10
 
-    global g = 9.81                # [m/s^2]
-    global m = 0.5                 # [kg]
-    global L = 0.5                 # [m]
-    global theta = [3.0]          # [rad]
-    global angularVelocity = [0.0] # [rad/s]
+    global g = 9.81                     # [m/s^2]
+    global m = 0.1                      # [kg]
+    
+    #////////////L1 section////////////
+    global L1 = 0.5                     # [m]
+    global theta1 = [3.0]               # [rad]
+    global angularVelocity1 = [0.0]     # [rad/s]
 
-    global posx = [L*sin(theta[1])]
-    global posy = [-L*cos(theta[1])]
+    global posx1 = [L1*sin(theta1[1])]
+    global posy1 = [-L1*cos(theta1[1])]
+
+    #////////////L2 section////////////
+    global L2 = 0.3                     # [m]
+    global theta2 = [3.0]               # [rad]
+    global angularVelocity2 = [0.0]     # [rad/s]
+
+    global posx2 = [L2*sin(theta2[1])]
+    global posy2 = [-L2*cos(theta2[1])]
 end
 
 #//////////////////////Physics//////////////////////
 begin
     function eulerStep(t)
-        angularAcceleration = -(g/L)*sin(theta[end])
-        new_angularVelocity = angularVelocity[end] + angularAcceleration*t
-        new_theta = theta[end] + new_angularVelocity*t
+        angularAcceleration1 = -(g/L1)*sin(theta1[end])
+        new_angularVelocity1 = angularVelocity1[end] + angularAcceleration1*t
+        new_theta1 = theta1[end] + new_angularVelocity1*t
 
-        push!(theta, new_theta)
-        push!(angularVelocity, new_angularVelocity)
-        push!(posx, L*sin(new_theta))
-        push!(posy, -L*cos(new_theta))
+        push!(theta1, new_theta1)
+        push!(angularVelocity1, new_angularVelocity1)
+        push!(posx1, L1*sin(new_theta1))
+        push!(posy1, -L1*cos(new_theta1))
     end
 end
 
 #//////////////////////Simulation//////////////////////
 begin
     function simulate(step, limitStep)
-        x = Observable(posx[end])
-        y = Observable(posy[end])
+        x = Observable(posx1[end])
+        y = Observable(posy1[end])
 
         global fig = Figure(resolution = (800, 800))
         ax = Axis(
             fig[1, 1],
             aspect = DataAspect(),
-            limits = (-L-0.1, L+0.1, -L-0.1, L+0.1)
+            limits = (-L1-0.1, L1+0.1, -L1-0.1, L1+0.1)
         )
 
         #//////Rod build//////
@@ -55,10 +65,10 @@ begin
 
         #//////Animation loop//////
         for i in 1:step:limitStep
-            eulerStep(step)
+            x[] = posx1[end]
+            y[] = posy1[end]
 
-            x[] = posx[end]
-            y[] = posy[end]
+            eulerStep(step)
 
             sleep(0.01)
             display(fig)
