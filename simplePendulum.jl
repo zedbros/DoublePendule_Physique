@@ -3,23 +3,24 @@ using GLMakie
 #//////////////////////Global variables//////////////////////
 begin
     global gStep = 0.01
-    global gLimitStep = 10
+    global gLimitStep = 100
 
     global g = 9.81                     # [m/s^2]
-    global m = 0.1                      # [kg]
     
     #////////////L1 section////////////
-    global L1 = 0.5                     # [m]
-    global theta1 = [3.14/2]               # [rad]
+    global m1 = 0.5                     # [kg]
+    global L1 = 0.09174                 # [m]
+    global theta1 = [3.14/2]            # [rad]
     global angularVelocity1 = [0.0]     # [rad/s]
 
     global posx1 = [L1*sin(theta1[1])]
     global posy1 = [-L1*cos(theta1[1])]
 
     #////////////L2 section////////////
-    global L2 = 0.3                     # [m]
+    global m2 = 0.3                     # [kg]
+    global L2 = 0.06933                 # [m]
     global theta2 = [3.0]               # [rad]
-    global angularVelocity2 = [0.0]     # [rad/s]
+    global angularVelocity2 = [3.0]     # [rad/s]
 
     global posx2 = [L1*sin(theta1[1]) + L2*sin(theta2[1])]
     global posy2 = [-L1*cos(theta1[1]) - L2*cos(theta2[1])]
@@ -28,7 +29,7 @@ end
 #//////////////////////Physics//////////////////////
 begin
     function eulerStep(t)
-        angularAcceleration1 = -(g/L1)*sin(theta1[end])
+        angularAcceleration1 = -((sin(theta1[end])*m1*g + sin(theta1[end] - theta2[end])*cos(theta2[end])*m2*g))/L1
         new_angularVelocity1 = angularVelocity1[end] + angularAcceleration1*t
         new_theta1 = theta1[end] + new_angularVelocity1*t
 
@@ -70,6 +71,7 @@ begin
             Point2f[(0, 0), (xb1, yb1)]
         end
         lines!(ax, rod1_points, linewidth = 1)
+        # arrows2d!(ax, rod1_points, color="red")
 
         rod2_points = lift(x2, y2) do xb2, yb2
             Point2f[(posx1[end], posy1[end]), (xb2, yb2)] # There may be an error caused by the starting point since I'm not sure which staged it is at (previous or current).
@@ -80,11 +82,11 @@ begin
         #//////Bob build//////
         scatter!(ax, lift(x1, y1) do xb1, yb1
             Point2f(xb1, yb1)
-        end, markersize = 5)
+        end, markersize = 7)
 
         scatter!(ax, lift(x2, y2) do xb2, yb2
             Point2f(xb2, yb2)
-        end, markersize = 3)
+        end, markersize = 5)
 
         #//////Animation loop//////
         for i in 1:step:limitStep
@@ -96,7 +98,7 @@ begin
 
             eulerStep(step)
 
-            sleep(0.01)
+            sleep(0.009)
             display(fig)
         end
     end
