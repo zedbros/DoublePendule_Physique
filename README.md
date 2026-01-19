@@ -102,3 +102,11 @@ I believe I also just removed m1 from the final equation by accident.
 
 In order to add precision to my calculations, it would be a good idea to split the euler step in shorter steps
 while still keeping the correct time signature.
+
+Okay so fixed the equations.
+Now there is still an issue.. and it may be farfetched, but I think when I operate with the theta1[end] for example, that it may potentially modify the actual table value. So instead, I am going to initialize hard values at the beginning of iterate(...).
+Nope that was not the issue.
+
+Still have the energy accumulation problem.. I think it may have to do with the iterate(step), may be too inaccurate for a double pendulum.
+
+Aight no time to continue.. Have to do some stats.
