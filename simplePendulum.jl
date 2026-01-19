@@ -35,7 +35,14 @@ end
 #//////////////////////Physics//////////////////////
 begin
     function eulerStep(t)
-        angularAcceleration1 = -((sin(theta1[end])*m1*g + sin(theta1[end] - theta2[end])*cos(theta2[end])*m2*g))/L1
+        # correct_angle_for_Ft2 = 0
+        # if sin(theta2[end]) < 0
+        #     correct_angle_for_Ft2 = -(abs(theta2[end]) - abs(theta1[end]))
+        # else
+        #     correct_angle_for_Ft2 = abs(theta2[end]) - abs(theta1[end])
+        # end
+
+        angularAcceleration1 = -((sin(theta1[end])*m1*g + sin(theta2[end] - theta1[end])*cos(theta2[end])*m2*g))/(m1*L1)
         new_angularVelocity1 = angularVelocity1[end] + angularAcceleration1*t
         new_theta1 = theta1[end] + new_angularVelocity1*t
 
@@ -106,8 +113,7 @@ begin
 
             eulerStep(step)
 
-            sleep(step)
-            display(fig)
+            # display(fig)
         end
     end
 end

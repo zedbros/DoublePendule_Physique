@@ -93,3 +93,12 @@ On peut ainsi garder la même méthode vù avec le pendule simple.
 Le bob1 à l'ajout de la force de tension vers bob2, ce qui influe directement la force de tension vers le pivot. Nous retrouvons les informations nécessaire avec la méthodologie ci-dessous. 
 
 ![Double pendulum resolution](./img/doublePendulumResolution.png)
+
+
+I think my angles between m1 and m2 are wrong.
+I believe I also just removed m1 from the final equation by accident.
+![Corrected double pendulum resolution](./img/corrected_double.jpg)
+
+
+In order to add precision to my calculations, it would be a good idea to split the euler step in shorter steps
+while still keeping the correct time signature.
