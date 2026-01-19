@@ -1,26 +1,32 @@
-using GLMakie
+using GLMakie # animation packages
+using Images #, BlobTracking, VideoIO # Video analysis packages
+
+#//////////////////////Video analysis//////////////////////
+
 
 #//////////////////////Global variables//////////////////////
 begin
     global gStep = 0.01
-    global gLimitStep = 100
+    global gLimitStep = 2
+    global fps = 100
+    # The step and the fps must be the same.. meaning that step = 1/fps
 
     global g = 9.81                     # [m/s^2]
     
     #////////////L1 section////////////
-    global m1 = 0.5                     # [kg]
+    global m1 = 0.0024                     # [kg]
     global L1 = 0.09174                 # [m]
-    global theta1 = [3.14/2]            # [rad]
-    global angularVelocity1 = [0.0]     # [rad/s]
+    global theta1 = [3.15066]            # [rad]
+    global angularVelocity1 = [0.3]     # [rad/s]
 
     global posx1 = [L1*sin(theta1[1])]
     global posy1 = [-L1*cos(theta1[1])]
 
     #////////////L2 section////////////
-    global m2 = 0.3                     # [kg]
+    global m2 = 0.003                     # [kg]
     global L2 = 0.06933                 # [m]
-    global theta2 = [3.0]               # [rad]
-    global angularVelocity2 = [3.0]     # [rad/s]
+    global theta2 = [3.23707]               # [rad]
+    global angularVelocity2 = [0.6]     # [rad/s]
 
     global posx2 = [L1*sin(theta1[1]) + L2*sin(theta2[1])]
     global posy2 = [-L1*cos(theta1[1]) - L2*cos(theta2[1])]
@@ -60,7 +66,7 @@ begin
         y2 = Observable(posy2[end])
 
         global fig = Figure(resolution = (800, 800))
-        ax = Axis(
+        ax = GLMakie.Axis(
             fig[1, 1],
             aspect = DataAspect(),
             limits = (-L1 - L2 - 0.1, L1 + L2 + 0.1, -L1 - L2 - 0.1, L1 + L2 + 0.1) #spaced because posy2 = L1 -L2 somehow causes an error !
@@ -82,14 +88,16 @@ begin
         #//////Bob build//////
         scatter!(ax, lift(x1, y1) do xb1, yb1
             Point2f(xb1, yb1)
-        end, markersize = 7)
+        end, markersize = 17)
 
         scatter!(ax, lift(x2, y2) do xb2, yb2
             Point2f(xb2, yb2)
-        end, markersize = 5)
+        end, markersize = 15)
+
+        timestamps = range(0, limitStep, step = step)
 
         #//////Animation loop//////
-        for i in 1:step:limitStep
+        record(fig, "Double_pendulum_testing.mp4", timestamps; fps) do t
             x1[] = posx1[end]
             y1[] = posy1[end]
 
@@ -98,7 +106,7 @@ begin
 
             eulerStep(step)
 
-            sleep(0.009)
+            sleep(step)
             display(fig)
         end
     end

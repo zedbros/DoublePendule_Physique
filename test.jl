@@ -1,29 +1,36 @@
+using Images, VideoIO, FileIO
 
-posy = [l, 0.67]   # [m]
+begin
+    local img_path = "./img/base.png"
+    local counter = 0
 
-y = posy[end]
+    local vid_path = "vids/First_Video_2s.mp4"
+    local frames = openvideo(vid_path)
 
-println(y)
+    function get_filtered_image(rgb_img)
 
-push!(posy, 6)
+        # local rgb_img = load(img_path)
+        local hsv_img = HSV.(rgb_img)
+        local channels = channelview(float.(hsv_img))
+        local hue_img = channels[1,:,:]
+        local value_img = channels[3,:,:]
+        local saturation_img = channels[2,:,:]
 
-new_y = posy[end]
+        local mask = zeros(size(hue_img))
+        local h, s, v = 360, 260, 150
+        for ind in eachindex(hue_img)
+            if hue_img[ind] <= h && saturation_img[ind] <= s/255 && value_img[ind] <= v/255
+                mask[ind] = 1
+            end
+        end
+        local binary_img = colorview(Gray, mask)
+        counter += 1
+        return binary_img
+    end
 
-println(new_y)
-
-
-# if x > 0
-#     new_vx = vx - sin(theta)*an*t
-# elseif x < 0
-#     new_vx = vx + sin(theta)*an*t
-# else
-#     new_vx = vx
-# end
-
-# if y > 0
-#     new_vy = vy + (-cos(theta)*an  - g)*t
-# elseif y < 0
-#     new_vy = vy + (cos(theta)*an  - g)*t
-# else
-#     new_vy = vy - g*t
-# end
+    for frame in frames
+        save("./frames/frame$counter.png", get_filtered_image(frame))
+    end
+    # close(frames)
+    # img = load(img_path)
+end
