@@ -1,10 +1,10 @@
 # DoublePendule_Physique
 Projet Physique HES-SO Valais-Wallis<br><br>
 # Objectifs du projet
-1. Simuler la dynamique du pendule double et la comparer aux vidéos;
-2. Prédire le comportement futur du pendule double;
+1. Simuler la dynamique du pendule double et la comparer aux vidéos.
+2. Prédire le comportement futur du pendule double.
 3. Quantifier la précision des résultats.
-## Matos
+## Matériel
 L1 = 91.74 $[mm]$\
 L2 = 69.33 $[mm]$
 ## Théorie
@@ -21,8 +21,8 @@ Cela est le but de ce projet. <br><br><br>
 
 
 # Pendule simple
-La période d'un pendule simple, ne dépend pas de la masse, juste de la longueur de la tige.<p>
-Un système de coordonnées polaire est utilisé pour les calculs.
+La période d'un pendule simple, ne dépend pas de la masse, simplement de la longueur de la tige.<p>
+Un système de coordonnées polaire est utilisé pour les calculs et un système cartésien pour l'animation.
 ## Lois et formules
 La conservation de l'énergie méchanique est présente. Ce qui fait en sorte que le bout du pendule revient à la même position que la balance précédente.
 
@@ -34,6 +34,12 @@ La conservation de l'énergie méchanique est présente. Ce qui fait en sorte qu
 
 >2ème Loi de Newton (rotation => Moment) $$M = I \alpha$$<br>
 
+Nous verrons que la faute principale commise durant ce projet, consiste à ne pas tenir en compte les conditions valables, pour qu'un pendule puisse être considéré comme pendule simple.
+
+Un pendule ne peut uniquement être considéré comme simple, si 
+- la tige n'est pas modifiable et ne possède pas de masse\
+ET
+- `son pivot à laquelle, il est attaché, reste static et ne subit aucune accélération`
 
 ## Forces agissant sur un pendule simple
 > Force de gravité<p>
@@ -48,12 +54,12 @@ Vitesse angulaire: $$\omega = \frac{\delta \theta}{\delta t}$$
 Accélération angulaire: $$\alpha = \frac{\delta \omega}{\delta t} = -\frac{g}{L}sin(\theta)$$<br>
 
 <!-- ![](...) to show it exactly. -->
-![Simple pendulum angular acceleration resolution](./img/simplePendulumAngularAccelerationResolution.png)
+![Simple pendulum angular acceleration resolution](./media/img/simplePendulumAngularAccelerationResolution.png)
 <br><br><br>
 
+
+# PARTIE FAUSSE
 # Double pendule
-
-
 ### <em> Notes
 La période d'un double pendule, dépend des deux masses et des longueurs des tiges, ce qui complexifie le problème.
 
@@ -75,29 +81,29 @@ I think so.
 ## Lois et formules
 La conservation de l'énergie méchanique est présente, ce qui garantie que le pendule bougera à l'infini, sauf dans le cas où sont état initiale est parfaitement équilibré.
 
-Les lois et formules nécessaires, se retrouvent identique que le pendule simple.
+Les lois et formules nécessaires, se retrouvent identiques que le pendule simple.
 
 ## Résolution
 <ins>Sur bob1:
 > Force de gravité <br>
-Force de soutient vers pivot
-Force de soutient vers bob2
+Force de soutient vers pivot (fixe) <br>
+Force de soutient vers bob2 (non fixe)
 
 <ins>Sur bob2:
 > Force de gravité <br>
-Force de soutient vers bob1
+Force de soutient vers bob1 (non fixe) => FAUX D'ASSUMER QUE BOB2 SOIT UN PENDULE SIMPLE !!!
 
 Les forces agissant sur bob2 sont identiques à un pendule simple, avec la seule exception que le pivot bouge et se trouve en position de bob1.\
 On peut ainsi garder la même méthode vù avec le pendule simple.
 
 Le bob1 à l'ajout de la force de tension vers bob2, ce qui influe directement la force de tension vers le pivot. Nous retrouvons les informations nécessaire avec la méthodologie ci-dessous. 
 
-![Double pendulum resolution](./img/doublePendulumResolution.png)
+![Double pendulum resolution](./media/img/doublePendulumResolution.png)
 
 
 I think my angles between m1 and m2 are wrong.
 I believe I also just removed m1 from the final equation by accident.
-![Corrected double pendulum resolution](./img/corrected_double.jpg)
+![Corrected double pendulum resolution](./media/img/corrected_double.jpg)
 
 This is still wrong, because I assumed that the second pendulum (the one at the end), was a simple pendulum attached to another one, that isn't simple, but takes into account the second one's tension, and therefor wouldn't create any issues.
 
@@ -114,3 +120,46 @@ Nope that was not the issue.
 Still have the energy accumulation problem.. I think it may have to do with the iterate(step), may be too inaccurate for a double pendulum.
 
 Aight no time to continue.. Have to do some stats.
+
+Added energy stats.
+
+IMPROVED energy accumulation by reducing dt (t), which improves accuracy, while still correctly taking into account the amount of frames passed for the animation.
+
+
+
+
+
+
+
+
+
+
+
+
+# PARTIE JUSTE
+# Double pendule
+### <em> Notes
+La période d'un double pendule, dépend des deux masses et des longueurs des tiges, ce qui complexifie le problème.
+</em>
+
+## Lois et formules
+La conservation de l'énergie méchanique est présente, ce qui garantie que le pendule bougera à l'infini, sauf dans le cas où sont état initiale est parfaitement équilibré.
+
+## Résolution
+<ins>Sur bob1:
+> Force de gravité <br>
+Force de soutient vers pivot (fixe) <br>
+Force de soutient vers bob2 (non fixe)
+
+<ins>Sur bob2:
+> Force de gravité <br>
+Force de soutient vers bob1 (non fixe)
+
+//insert long calculations for both bob's angular acceleration equations
+
+
+
+# Analyse et prédiction
+Cette partie s'occupe de prendre une vidéo d'un double pendule, de lui en extraire son mouvement afin d'estimer les masses des bobs pour l'appliquer à notre système.
+## Estimation des masses
+Un début a été mis en production avec les méthodes présents dans le dossier `analysis` et ses résultats présents dans le dossier `media/gifs` et `media/img`.

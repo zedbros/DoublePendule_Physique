@@ -2,9 +2,9 @@ using GLMakie # animation package
 
 #//////////////////////Global variables//////////////////////
 begin
-    global gStep = 0.00001
-    global gLimitStep = 1.6
-    global fps = 100                    # The step and the fps must be the same.. meaning that step = 1/fps
+    global gStep = 0.00001              # affects the precision of the iteration => lower improves accuracy
+    global gLimitStep = 5               # How long the animation goes for.
+    global fps = 60                     # Frames per second of the animation
 
     global g = 9.81                     # [m/s^2]
     
@@ -14,8 +14,8 @@ begin
     global theta1 = [3.15066]           # [rad]
     global angularVelocity1 = [0.3]     # [rad/s]
 
-    global posx1 = [L1*sin(theta1[1])]
-    global posy1 = [-L1*cos(theta1[1])]
+    global posx1 = [L1*sin(theta1[1])]  # Cartesian coordination system for plotting the animation
+    global posy1 = [-L1*cos(theta1[1])] # Cartesian coordination system for plotting the animation
 
     #/////////////L2 section/////////////
     global m2 = 0.003                   # [kg]
@@ -23,8 +23,8 @@ begin
     global theta2 = [3.23707]           # [rad]
     global angularVelocity2 = [0.6]     # [rad/s]
 
-    global posx2 = [L1*sin(theta1[1]) + L2*sin(theta2[1])]
-    global posy2 = [-L1*cos(theta1[1]) - L2*cos(theta2[1])]
+    global posx2 = [L1*sin(theta1[1]) + L2*sin(theta2[1])]  # Cartesian coordination system for plotting the animation
+    global posy2 = [-L1*cos(theta1[1]) - L2*cos(theta2[1])] # Cartesian coordination system for plotting the animation
 
     #///////////Tests section///////////
     global E = []
@@ -42,10 +42,11 @@ begin
         delta = t1 - t2
         den = 2.0*m1+m2-m2*cos(2.0*delta)
 
+        # Final movement equations
         angularAcceleration1 = (-g*(2.0*m1 + m2)*sin(t1) - m2*g*sin(t1 - 2.0*t2) - 2.0*m2*sin(delta)*(w2^2 * L2 + w1^2 * L1*cos(delta))) / (den*L1)
         angularAcceleration2 = (2.0*sin(delta)*(w1^2 * L1*(m1 + m2) + g*(m1 + m2)*cos(t1) + w2^2 * L2*m2*cos(delta))) / (den*L2)
 
-
+        # Velocity and angle update
         new_angularVelocity1 = w1 + angularAcceleration1*t
         new_angularVelocity2 = w2 + angularAcceleration2*t
 
@@ -53,6 +54,7 @@ begin
         new_theta2 = t2 + new_angularVelocity2*t
 
 
+        # Insertion into arrays for plotting
         push!(angularVelocity1, new_angularVelocity1)
         push!(angularVelocity2, new_angularVelocity2)
         push!(theta1, new_theta1)
@@ -67,7 +69,7 @@ begin
 end
 
 #//////////////////////Tests//////////////////////
-function cin()
+function cin() # Kinetic energy of the system
     t1 = theta1[end]
     t2 = theta2[end]
     w1 = angularVelocity1[end]
@@ -81,7 +83,7 @@ function cin()
     c = T1 + T2
     return c
 end
-function pot()
+function pot() # Potential energy of the system
     t1 = theta1[end]
     t2 = theta2[end]
 
@@ -91,7 +93,7 @@ function pot()
     p = m1*g*y1 + m2*g*y2
     return p
 end
-function energy()
+function energy() # Total energy of the system when called
     return cin() + pot()
 end
 
@@ -131,14 +133,14 @@ begin
         end, markersize = 15)
 
         #///////////Animation loop///////////
-        function middle_steps(mid_steps)
-            for i in 0:gStep:mid_steps
-                iterate(gStep)
+        function middle_steps(mid_steps) # Serves as the background calculator called proportionally in between each frame
+            for i in 0:gStep:mid_steps   # so that the accuracy of the animation does not depend on the amount of chosen
+                iterate(gStep)           # frames. (animates the pendulum correctly while still being very precise with the calculations)
             end
         end
         #///////////Animation loop///////////
-        timestamps = range(0, gLimitStep, step = 0.1/fps)
-        record(fig, "new_dbl_pen.mp4", timestamps; fps) do t
+        timestamps = range(0, gLimitStep, step = 1/fps)
+        record(fig, "new_dbl_pen.mp4", timestamps; fps) do t # Handles the entire logic, whilst recording and saving the final animation.
             # Positions
             x1[] = posx1[end]
             y1[] = posy1[end]
@@ -158,7 +160,7 @@ end
 
 #//////////////////////Main//////////////////////
 begin
-    simulate()
+    simulate() # Run main (the whole double pendulum system)
     print("The variation of energy, throughout this simulation is 
     start_energy $(E[1]) - end_energy $(E[end]) = $(E[1] - E[end]). 
     It should be equal to 0, since the double pendulum follows the laws of conservation of energy.")
