@@ -2,8 +2,8 @@ using GLMakie # animation package
 
 #//////////////////////Global variables//////////////////////
 begin
-    global gStep = 0.01
-    global gLimitStep = 2.0
+    global gStep = 0.00001
+    global gLimitStep = 1.6
     global fps = 100                    # The step and the fps must be the same.. meaning that step = 1/fps
 
     global g = 9.81                     # [m/s^2]
@@ -97,7 +97,7 @@ end
 
 #//////////////////////Simulation//////////////////////
 begin
-    function simulate(step, limitStep)
+    function simulate()
         x1 = Observable(posx1[end])
         y1 = Observable(posy1[end])
 
@@ -111,7 +111,7 @@ begin
             limits = (-L1 - L2 - 0.1, L1 + L2 + 0.1, -L1 - L2 - 0.1, L1 + L2 + 0.1) #spaced because posy2 = L1 -L2 somehow causes an error !
         )
 
-        #//////Rod build//////
+        #///////////Rod build///////////
         rod1_points = lift(x1, y1) do xb1, yb1
             Point2f[(0, 0), (xb1, yb1)]
         end
@@ -121,7 +121,7 @@ begin
         end
         lines!(ax, rod2_points, linewidth = 1)
         
-        #//////Bob build//////
+        #///////////Bob build///////////
         scatter!(ax, lift(x1, y1) do xb1, yb1
             Point2f(xb1, yb1)
         end, markersize = 17)
@@ -130,8 +130,14 @@ begin
             Point2f(xb2, yb2)
         end, markersize = 15)
 
-        #//////Animation loop//////
-        timestamps = range(0.0, limitStep, step = step)
+        #///////////Animation loop///////////
+        function middle_steps(mid_steps)
+            for i in 0:gStep:mid_steps
+                iterate(gStep)
+            end
+        end
+        #///////////Animation loop///////////
+        timestamps = range(0, gLimitStep, step = 0.1/fps)
         record(fig, "new_dbl_pen.mp4", timestamps; fps) do t
             # Positions
             x1[] = posx1[end]
@@ -144,7 +150,7 @@ begin
             push!(E, energy())
 
             # Iterate
-            iterate(step)
+            middle_steps(1/fps)
         end
     end
 end
@@ -152,7 +158,7 @@ end
 
 #//////////////////////Main//////////////////////
 begin
-    simulate(gStep, gLimitStep)
+    simulate()
     print("The variation of energy, throughout this simulation is 
     start_energy $(E[1]) - end_energy $(E[end]) = $(E[1] - E[end]). 
     It should be equal to 0, since the double pendulum follows the laws of conservation of energy.")
