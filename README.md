@@ -99,6 +99,10 @@ I think my angles between m1 and m2 are wrong.
 I believe I also just removed m1 from the final equation by accident.
 ![Corrected double pendulum resolution](./img/corrected_double.jpg)
 
+This is still wrong, because I assumed that the second pendulum (the one at the end), was a simple pendulum attached to another one, that isn't simple, but takes into account the second one's tension, and therefor wouldn't create any issues.
+
+This is where I went completely wrong, because to assume the second one is a simple pendulum, would to assume that it's pivot is fixed, which is not the case, and therefor my entire logic falls appart completely.
+
 
 In order to add precision to my calculations, it would be a good idea to split the euler step in shorter steps
 while still keeping the correct time signature.
