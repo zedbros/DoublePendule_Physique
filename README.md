@@ -1,5 +1,5 @@
 # DoublePendule_Physique
-Projet Physique HES-SO Valais-Wallis<br><br>
+Projet Physique HES-SO.<br><br>
 # Objectifs du projet
 1. Simuler la dynamique du pendule double et la comparer aux vidéos.
 2. Prédire le comportement futur du pendule double.
